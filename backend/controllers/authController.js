@@ -1,6 +1,7 @@
 const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
+const Skill = require('../models/Skill');
 
 
 const generateToken = (id) => {
@@ -102,28 +103,27 @@ exports.loginUser = async (req, res) => {
 
 
 exports.getUserProfile = async (req, res) => {
-    try {
-        const user = await User.findById(req.user._id);
-        if (!user) {
-            return res.status(404).json({ message: 'User not found' });
-        }
+  try {
+    const user = await User.findById(req.user.id)
+      .populate('completedSkills') // shows skill names from IDs
+      .populate('badges');
 
-        res.json({
-    _id: user._id,
-    username: user.username,
-    email: user.email,
-    skills: user.skills,
-    totalXP: user.totalXP,
-    level: user.level,
-    overallRank: user.overallRank,
-    technicalRank: user.technicalRank,
-    businessRank: user.businessRank,
-    completedChallenges: user.completedChallenges
-});
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
+    const enrichedSkills = user.skills.map(skill => ({
+      name: skill.name,
+      type: skill.type,
+      level: skill.level,
+      experience: skill.experience,
+      badges: skill.badges || []
+    }));
 
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: 'Server error' });
-    }
+    res.json({
+      ...user.toObject(),
+      skills: enrichedSkills
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
 };

@@ -1,9 +1,12 @@
-
 const express = require('express');
 const router = express.Router();
+
 const {
-  openChallenge, completeChallenge, completeMonthlyChallenge
-} = require('../controllers/challengesController');
+  openChallenge,
+  completeChallenge,
+  completeMonthlyChallenge
+} = require('../controllers/challengeController');
+
 const { protect } = require('../middleware/authMiddleware');
 
 router.post('/:id/open', protect, openChallenge);
