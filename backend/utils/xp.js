@@ -8,9 +8,9 @@
 const awardXp = (user, category, amount) => {
   user.totalXp += amount;
   if (category === 'technical') {
-    user.xpTechnical += amount;
+    user.technicalXp += amount;
   } else if (category === 'business') {
-    user.xpBusiness += amount;
+    user.businessXp += amount;
   }
 };
 

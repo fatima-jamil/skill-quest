@@ -4,17 +4,34 @@ const { awardXp } = require('../utils/xp');
 const { updateStreak } = require('../utils/streak');
 const Badge = require('../models/Badge');
 
-
+// ✅ LIST ALL CHALLENGES
 exports.listChallenges = async (req, res) => {
   try {
+    const user = await User.findById(req.user.id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
     const challenges = await Challenge.find().populate('skill');
-    res.json(challenges);
+    
+    // Add completion status to each challenge
+    const challengesWithStatus = challenges.map(challenge => {
+      const isCompleted = user.completedChallenges.some(
+        c => c.challengeId.toString() === challenge._id.toString()
+      );
+      
+      return {
+        ...challenge.toObject(),
+        isCompleted
+      };
+    });
+
+    res.json(challengesWithStatus);
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
+// ✅ OPEN A CHALLENGE (updates streak)
 exports.openChallenge = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -30,6 +47,7 @@ exports.openChallenge = async (req, res) => {
   }
 };
 
+// ✅ COMPLETE A CHALLENGE
 exports.completeChallenge = async (req, res) => {
   try {
     const challenge = await Challenge.findById(req.params.id).populate('skill');
@@ -46,7 +64,7 @@ exports.completeChallenge = async (req, res) => {
       return res.status(400).json({ message: 'Challenge already completed' });
     }
 
-    // Award XP
+    // Award XP (with FIXED field names)
     awardXp(user, challenge.skill.category, challenge.xpReward);
 
     // ✅ Add or update user's skill tracking
@@ -67,10 +85,10 @@ exports.completeChallenge = async (req, res) => {
       existingSkill.level = Math.floor(existingSkill.experience / 100); // example level-up logic
     }
 
-    // Create badge
+    // Create badge for completing the challenge
     const badge = await Badge.create({
-      name: 'Challenge Master',
-      description: 'Completed a challenge with grace and possibly caffeine.',
+      name: `${challenge.skill.name} Challenge Master`,
+      description: `Completed the ${challenge.skill.name} challenge`,
       icon: ''
     });
     user.badges.push(badge._id);
@@ -90,14 +108,20 @@ exports.completeChallenge = async (req, res) => {
     updateStreak(user);
     await user.save();
 
-    res.json({ message: 'Challenge completed', totalXp: user.totalXp });
+    res.json({ 
+      message: 'Challenge completed', 
+      totalXp: user.totalXp,
+      technicalXp: user.technicalXp,
+      businessXp: user.businessXp,
+      badge: badge
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-
+// ✅ COMPLETE MONTHLY CHALLENGE
 exports.completeMonthlyChallenge = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -114,26 +138,33 @@ exports.completeMonthlyChallenge = async (req, res) => {
       return res.status(400).json({ message: 'Monthly challenge already completed' });
     }
 
-    // Award XP
+    // Award XP for monthly challenge (typically technical category)
     const monthlyXp = 1000;
     awardXp(user, 'technical', monthlyXp);
 
     // Create and assign 5 badges
+    const badges = [];
     for (let i = 1; i <= 5; i++) {
       const badge = await Badge.create({
         name: `Monthly Challenge Badge ${i}`,
         description: `Badge ${i} for completing the monthly challenge`,
-        icon: '' // or a real icon path if needed
+        icon: ''
       });
-
-      user.badges.push(badge._id); // Only the ID goes in
+      user.badges.push(badge._id);
+      badges.push(badge);
     }
 
     user.lastMonthlyChallengeCompletedAt = now;
     updateStreak(user);
     await user.save();
 
-    res.json({ message: 'Monthly challenge completed', totalXp: user.totalXp });
+    res.json({ 
+      message: 'Monthly challenge completed', 
+      totalXp: user.totalXp,
+      technicalXp: user.technicalXp,
+      businessXp: user.businessXp,
+      badges: badges
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
