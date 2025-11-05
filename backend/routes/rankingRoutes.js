@@ -5,6 +5,6 @@ const { getLeaderboard } = require('../controllers/rankingController');
 const { protect } = require('../middleware/authMiddleware');
 
 
-router.get('/', protect, getLeaderboard);
+router.get('/leaderboard', protect, getLeaderboard);
 
 module.exports = router;

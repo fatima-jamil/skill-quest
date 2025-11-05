@@ -53,10 +53,10 @@ app.post('/test', (req, res) => {
 app.use('/api/auth', require('./routes/authRoutes'));
 
 // 🧠 NEW FUNCTIONALITY STARTS HERE
-// app.use('/api/dashboard', require('./routes/dashboardRoutes'));
+app.use('/api/users', require('./routes/dashboardRoutes'));
 app.use('/api/skills', require('./routes/skillsRoutes'));
 app.use('/api/challenges', require('./routes/challengeRoutes'));
-app.use('/api/ranking', require('./routes/rankingRoutes'));
+app.use('/api/rankings', require('./routes/rankingRoutes'));
 // 🧠 NEW FUNCTIONALITY ENDS HERE
 
 // Error handling middleware
