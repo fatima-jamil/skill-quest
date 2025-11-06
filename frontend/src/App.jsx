@@ -4,13 +4,38 @@ import Landing from './pages/Landing/Landing.jsx';
 import Login from './components/Auth/Login.jsx';
 import Signup from './components/Auth/Signup.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
+import Dashboard from './pages/Dashboard/Dashboard.jsx';
+import Skills from './pages/Skills/Skills.jsx';
 import './App.css';
 
-// Placeholder components (we'll create these next)
-const Dashboard = () => <div>Dashboard (Coming Soon)</div>;
-const Skills = () => <div>Skills (Coming Soon)</div>;
-const Challenges = () => <div>Challenges (Coming Soon)</div>;
-const Ranking = () => <div>Ranking (Coming Soon)</div>;
+// Placeholder components for upcoming features
+const Challenges = () => (
+  <div style={{
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#0f0f23',
+    color: 'white',
+    fontSize: '24px'
+  }}>
+    Challenges (Coming Soon)
+  </div>
+);
+
+const Ranking = () => (
+  <div style={{
+    minHeight: '100vh',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    background: '#0f0f23',
+    color: 'white',
+    fontSize: '24px'
+  }}>
+    Ranking (Coming Soon)
+  </div>
+);
 
 function App() {
   return (
