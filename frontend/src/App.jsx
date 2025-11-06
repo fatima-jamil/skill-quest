@@ -6,6 +6,9 @@ import Signup from './components/Auth/Signup.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Skills from './pages/Skills/Skills.jsx';
+
+
+
 import './App.css';
 
 // Placeholder components for upcoming features
