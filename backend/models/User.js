@@ -50,7 +50,9 @@ const userSchema = new mongoose.Schema({
       experience: {
         type: Number,
         default: 0
-      }
+      },
+      completedAt: Date,  // ADDED: Track when skill was completed
+      earnedXp: Number    // ADDED: Track XP earned from this skill
     }
   ],
 

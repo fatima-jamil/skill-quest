@@ -1,6 +1,5 @@
 // controllers/dashboardController.js
 const User = require('../models/User');
-const { getTopUsersByXp } = require('../utils/leaderboard');
 
 exports.getDashboard = async (req, res) => {
   try {
@@ -17,20 +16,42 @@ exports.getDashboard = async (req, res) => {
     const longestStreak = user.longestStreak;
     const recentBadges = user.badges.slice(-5).reverse();
 
-    // XP Growth (last 7 days)
+    // XP Growth (last 7 days) - FIXED
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    
     const xpGrowth = Array.from({ length: 7 }, (_, i) => {
-      const date = new Date();
-      date.setDate(date.getDate() - (6 - i));
-      const dayStart = new Date(date.setHours(0, 0, 0, 0));
-      const dayEnd = new Date(date.setHours(23, 59, 59, 999));
+      const date = new Date(today);
+      date.setDate(date.getDate() - (6 - i)); // Start from 6 days ago
+      const dayStart = new Date(date);
+      dayStart.setHours(0, 0, 0, 0);
+      const dayEnd = new Date(date);
+      dayEnd.setHours(23, 59, 59, 999);
       
-      const xpThatDay = user.completedChallenges
-        .filter(c => new Date(c.completedAt) >= dayStart && new Date(c.completedAt) <= dayEnd)
+      // Calculate XP from challenges completed on this day
+      const challengeXp = user.completedChallenges
+        .filter(c => {
+          const completedDate = new Date(c.completedAt);
+          return completedDate >= dayStart && completedDate <= dayEnd;
+        })
         .reduce((sum, c) => sum + (c.earnedXp || 0), 0);
+
+      // Calculate XP from skills completed on this day
+      // We need to track skill completion dates in the user's skills array
+      const skillXp = user.skills
+        .filter(s => {
+          // If skill has a completion date, check if it's on this day
+          if (s.completedAt) {
+            const completedDate = new Date(s.completedAt);
+            return completedDate >= dayStart && completedDate <= dayEnd;
+          }
+          return false;
+        })
+        .reduce((sum, s) => sum + (s.earnedXp || 0), 0);
 
       return {
         date: dayStart.toISOString().split('T')[0],
-        xp: xpThatDay
+        xp: challengeXp + skillXp
       };
     });
 
@@ -41,12 +62,6 @@ exports.getDashboard = async (req, res) => {
       level: skill.level,
       experience: skill.experience
     }));
-
-    // Monthly challenge check
-    const now = new Date();
-    const monthlyChallengeCompleted = user.lastMonthlyChallengeCompletedAt &&
-      user.lastMonthlyChallengeCompletedAt.getMonth() === now.getMonth() &&
-      user.lastMonthlyChallengeCompletedAt.getFullYear() === now.getFullYear();
 
     // Overall rank
     const higherRankCount = await User.countDocuments({ totalXp: { $gt: totalXp } });
@@ -61,7 +76,6 @@ exports.getDashboard = async (req, res) => {
       recentBadges,
       xpGrowth,
       startedSkillsProgress,
-      monthlyChallengeCompleted,
       overallRank
     });
 

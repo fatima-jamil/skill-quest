@@ -1,7 +1,7 @@
-
 const Skill = require('../models/Skill');
 const User = require('../models/User');
 const { awardXp } = require('../utils/xp');
+const { updateStreak } = require('../utils/streak');
 
 exports.listSkills = async (req, res) => {
   try {
@@ -25,18 +25,48 @@ exports.completeSkill = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-
+    // Check if skill already completed
     if (user.completedSkills.includes(skill._id)) {
       return res.status(400).json({ message: 'Skill already completed' });
     }
 
-
+    // Add to completed skills
     user.completedSkills.push(skill._id);
 
+    // Award XP
     awardXp(user, skill.category, skill.xpReward);
+
+    // Update or add skill in user's skills array with completion tracking
+    const existingSkill = user.skills.find(
+      s => s.name === skill.name && s.type === skill.category
+    );
+
+    if (existingSkill) {
+      existingSkill.completedAt = new Date();
+      existingSkill.earnedXp = skill.xpReward;
+      existingSkill.experience += skill.xpReward;
+      existingSkill.level = Math.floor(existingSkill.experience / 100);
+    } else {
+      user.skills.push({
+        name: skill.name,
+        type: skill.category,
+        level: 1,
+        experience: skill.xpReward,
+        completedAt: new Date(),
+        earnedXp: skill.xpReward
+      });
+    }
+
+    // Update streak - FIXED: Update on skill completion too
+    updateStreak(user);
+    
     await user.save();
 
-    res.json({ message: 'Skill completed', totalXp: user.totalXp });
+    res.json({ 
+      message: 'Skill completed', 
+      totalXp: user.totalXp,
+      currentStreak: user.currentStreak 
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });

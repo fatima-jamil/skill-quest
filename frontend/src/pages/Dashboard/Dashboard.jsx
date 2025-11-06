@@ -8,6 +8,13 @@ import {
 } from 'lucide-react';
 import './Dashboard.css';
 
+// Helper function to get correct day names
+const getDayName = (dateString) => {
+  const date = new Date(dateString);
+  const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+  return days[date.getDay()];
+};
+
 const Dashboard = () => {
   const navigate = useNavigate();
   const currentUser = getCurrentUser();
@@ -36,6 +43,8 @@ const Dashboard = () => {
   const handleLogout = () => {
     logout();
   };
+
+
 
   if (loading) {
     return (
@@ -141,9 +150,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Main Content Grid */}
+        {/* Main Content Grid - REMOVED MONTHLY CHALLENGE */}
         <div className="main-grid">
-          {/* XP Growth Chart */}
+          {/* XP Growth Chart - FIXED DAY LABELS */}
           <div className="dashboard-card xp-chart-card">
             <h3 className="card-title">
               <TrendingUp size={20} />
@@ -155,8 +164,7 @@ const Dashboard = () => {
                   {dashboardData.xpGrowth.map((day, index) => {
                     const maxXp = Math.max(...dashboardData.xpGrowth.map(d => d.xp), 1);
                     const heightPercent = (day.xp / maxXp) * 100;
-                    const date = new Date(day.date);
-                    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                    const dayName = getDayName(day.date);
                     
                     return (
                       <div key={index} className="bar-item">
@@ -164,7 +172,7 @@ const Dashboard = () => {
                           <div 
                             className="bar" 
                             style={{ height: `${heightPercent}%` }}
-                            title={`${day.xp} XP`}
+                            title={`${day.xp} XP on ${dayName}`}
                           >
                             <span className="bar-value">{day.xp}</span>
                           </div>
@@ -243,48 +251,6 @@ const Dashboard = () => {
                   <p>Complete challenges to earn badges!</p>
                   <button className="btn-start" onClick={() => navigate('/challenges')}>
                     View Challenges
-                  </button>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Monthly Challenge */}
-          <div className="dashboard-card monthly-challenge-card">
-            <h3 className="card-title">
-              <Target size={20} />
-              Monthly Challenge
-            </h3>
-            <div className="challenge-content">
-              {dashboardData?.monthlyChallengeCompleted ? (
-                <div className="challenge-completed">
-                  <div className="success-icon">
-                    <CheckCircle size={48} />
-                  </div>
-                  <h4>Challenge Completed! 🎉</h4>
-                  <p>You've completed this month's challenge. Come back next month for a new one!</p>
-                </div>
-              ) : (
-                <div className="challenge-active">
-                  <div className="challenge-info">
-                    <h4>Monthly Mega Challenge</h4>
-                    <p>Complete this month's special challenge to earn massive rewards!</p>
-                    <div className="challenge-rewards">
-                      <div className="reward-item">
-                        <Zap size={20} />
-                        <span>1000 XP</span>
-                      </div>
-                      <div className="reward-item">
-                        <Award size={20} />
-                        <span>5 Exclusive Badges</span>
-                      </div>
-                    </div>
-                  </div>
-                  <button 
-                    className="btn-challenge"
-                    onClick={() => navigate('/challenges')}
-                  >
-                    Start Challenge →
                   </button>
                 </div>
               )}
