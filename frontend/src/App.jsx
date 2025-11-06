@@ -6,39 +6,41 @@ import Signup from './components/Auth/Signup.jsx';
 import ProtectedRoute from './components/ProtectedRoute.jsx';
 import Dashboard from './pages/Dashboard/Dashboard.jsx';
 import Skills from './pages/Skills/Skills.jsx';
+import Challenges from './pages/Challenges/Challenges.jsx';
+import Ranking from './pages/Ranking/Ranking.jsx';
 
 
 
 import './App.css';
 
 // Placeholder components for upcoming features
-const Challenges = () => (
-  <div style={{
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#0f0f23',
-    color: 'white',
-    fontSize: '24px'
-  }}>
-    Challenges (Coming Soon)
-  </div>
-);
+// const Challenges = () => (
+//   <div style={{
+//     minHeight: '100vh',
+//     display: 'flex',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     background: '#0f0f23',
+//     color: 'white',
+//     fontSize: '24px'
+//   }}>
+//     Challenges (Coming Soon)
+//   </div>
+// );
 
-const Ranking = () => (
-  <div style={{
-    minHeight: '100vh',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    background: '#0f0f23',
-    color: 'white',
-    fontSize: '24px'
-  }}>
-    Ranking (Coming Soon)
-  </div>
-);
+// const Ranking = () => (
+//   <div style={{
+//     minHeight: '100vh',
+//     display: 'flex',
+//     alignItems: 'center',
+//     justifyContent: 'center',
+//     background: '#0f0f23',
+//     color: 'white',
+//     fontSize: '24px'
+//   }}>
+//     Ranking (Coming Soon)
+//   </div>
+// );
 
 function App() {
   return (
