@@ -16,19 +16,19 @@ exports.getDashboard = async (req, res) => {
     const longestStreak = user.longestStreak;
     const recentBadges = user.badges.slice(-5).reverse();
 
-    // XP Growth (last 7 days) - FIXED
+    // XP Growth (last 7 days) - FIXED to include monthly challenge
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
     const xpGrowth = Array.from({ length: 7 }, (_, i) => {
       const date = new Date(today);
-      date.setDate(date.getDate() - (6 - i)); // Start from 6 days ago
+      date.setDate(date.getDate() - (6 - i));
       const dayStart = new Date(date);
       dayStart.setHours(0, 0, 0, 0);
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
       
-      // Calculate XP from challenges completed on this day
+      // Calculate XP from regular challenges completed on this day
       const challengeXp = user.completedChallenges
         .filter(c => {
           const completedDate = new Date(c.completedAt);
@@ -37,10 +37,8 @@ exports.getDashboard = async (req, res) => {
         .reduce((sum, c) => sum + (c.earnedXp || 0), 0);
 
       // Calculate XP from skills completed on this day
-      // We need to track skill completion dates in the user's skills array
       const skillXp = user.skills
         .filter(s => {
-          // If skill has a completion date, check if it's on this day
           if (s.completedAt) {
             const completedDate = new Date(s.completedAt);
             return completedDate >= dayStart && completedDate <= dayEnd;
@@ -49,9 +47,18 @@ exports.getDashboard = async (req, res) => {
         })
         .reduce((sum, s) => sum + (s.earnedXp || 0), 0);
 
+      // FIXED: Calculate XP from monthly challenge completed on this day
+      let monthlyXp = 0;
+      if (user.lastMonthlyChallengeCompletedAt) {
+        const monthlyDate = new Date(user.lastMonthlyChallengeCompletedAt);
+        if (monthlyDate >= dayStart && monthlyDate <= dayEnd) {
+          monthlyXp = 1000; // Monthly challenge XP reward
+        }
+      }
+
       return {
         date: dayStart.toISOString().split('T')[0],
-        xp: challengeXp + skillXp
+        xp: challengeXp + skillXp + monthlyXp
       };
     });
 

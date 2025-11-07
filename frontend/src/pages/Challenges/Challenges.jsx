@@ -68,23 +68,24 @@ const Challenges = () => {
   };
 
   const handleCompleteMonthlyChallenge = async () => {
-    setActionLoading(true);
-    try {
-      const response = await challengesAPI.completeMonthlyChallenge();
-      
-      if (response.message === 'Monthly challenge already completed') {
-        alert('You have already completed this month\'s challenge!');
-      } else {
-        alert(`🎉 Monthly challenge completed! You earned ${response.badges.length} badges and ${response.technicalXp} XP!`);
-        fetchChallenges();
-      }
-    } catch (err) {
-      setError('Failed to complete monthly challenge');
-      console.error(err);
-    } finally {
-      setActionLoading(false);
+  setActionLoading(true);
+  try {
+    const response = await challengesAPI.completeMonthlyChallenge();
+    
+    if (response.message === 'Monthly challenge already completed') {
+      alert('You have already completed this month\'s challenge!');
+    } else {
+      // FIXED: Show correct badge count (1 instead of response.badges.length)
+      alert(`🎉 Monthly challenge completed! You earned 1 exclusive badge and ${response.technicalXp} XP!`);
+      fetchChallenges();
     }
-  };
+  } catch (err) {
+    setError('Failed to complete monthly challenge');
+    console.error(err);
+  } finally {
+    setActionLoading(false);
+  }
+};
 
   const handleLogout = () => {
     logout();
@@ -139,48 +140,50 @@ const Challenges = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        {/* Monthly Challenge Section */}
-        {monthlyChallenge && (
-          <div className="monthly-challenge-section">
-            <div className="monthly-challenge-card">
-              <div className="monthly-badge">
-                <Calendar size={32} />
-                <span>Monthly Challenge</span>
-              </div>
-              <h2>{monthlyChallenge.title}</h2>
-              <p>Complete this month's mega challenge for massive rewards!</p>
-              <div className="monthly-rewards">
-                <div className="reward-item">
-                  <Zap size={24} />
-                  <div>
-                    <div className="reward-label">XP Reward</div>
-                    <div className="reward-value">{monthlyChallenge.xpReward}</div>
-                  </div>
-                </div>
-                <div className="reward-item">
-                  <Trophy size={24} />
-                  <div>
-                    <div className="reward-label">Badges</div>
-                    <div className="reward-value">5 Exclusive</div>
-                  </div>
-                </div>
-              </div>
-              {monthlyChallenge.isCompleted ? (
-                <button className="btn-completed" disabled>
-                  <CheckCircle size={20} /> Completed This Month
-                </button>
-              ) : (
-                <button 
-                  className="btn-monthly-challenge"
-                  onClick={handleCompleteMonthlyChallenge}
-                  disabled={actionLoading}
-                >
-                  {actionLoading ? 'Processing...' : 'Start Monthly Challenge →'}
-                </button>
-              )}
-            </div>
+
+{/* Monthly Challenge Section */}
+{monthlyChallenge && (
+  <div className="monthly-challenge-section">
+    <div className="monthly-challenge-card">
+      <div className="monthly-badge">
+        <Calendar size={32} />
+        <span>Monthly Challenge</span>
+      </div>
+      <h2>{monthlyChallenge.title}</h2>
+      <p>Complete this month's mega challenge for massive rewards!</p>
+      <div className="monthly-rewards">
+        <div className="reward-item">
+          <Zap size={24} />
+          <div>
+            <div className="reward-label">XP Reward</div>
+            <div className="reward-value">{monthlyChallenge.xpReward}</div>
           </div>
-        )}
+        </div>
+        <div className="reward-item">
+          <Trophy size={24} />
+          <div>
+            <div className="reward-label">Badge</div>
+            {/* FIXED: Changed from "5 Exclusive" to "1 Exclusive" */}
+            <div className="reward-value">1 Exclusive</div>
+          </div>
+        </div>
+      </div>
+      {monthlyChallenge.isCompleted ? (
+        <button className="btn-completed" disabled>
+          <CheckCircle size={20} /> Completed This Month
+        </button>
+      ) : (
+        <button 
+          className="btn-monthly-challenge"
+          onClick={handleCompleteMonthlyChallenge}
+          disabled={actionLoading}
+        >
+          {actionLoading ? 'Processing...' : 'Start Monthly Challenge →'}
+        </button>
+      )}
+    </div>
+  </div>
+)}
 
         {/* Regular Challenges Grid */}
         <div className="challenges-section">

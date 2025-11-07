@@ -121,7 +121,7 @@ exports.completeChallenge = async (req, res) => {
   }
 };
 
-// ✅ COMPLETE MONTHLY CHALLENGE
+// ✅ COMPLETE MONTHLY CHALLENGE - FIXED: Only 1 badge instead of 5
 exports.completeMonthlyChallenge = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -142,17 +142,13 @@ exports.completeMonthlyChallenge = async (req, res) => {
     const monthlyXp = 1000;
     awardXp(user, 'technical', monthlyXp);
 
-    // Create and assign 5 badges
-    const badges = [];
-    for (let i = 1; i <= 5; i++) {
-      const badge = await Badge.create({
-        name: `Monthly Challenge Badge ${i}`,
-        description: `Badge ${i} for completing the monthly challenge`,
-        icon: ''
-      });
-      user.badges.push(badge._id);
-      badges.push(badge);
-    }
+    // FIXED: Create and assign only 1 badge instead of 5
+    const badge = await Badge.create({
+      name: `Monthly Challenge Champion`,
+      description: `Completed the monthly mega challenge`,
+      icon: ''
+    });
+    user.badges.push(badge._id);
 
     user.lastMonthlyChallengeCompletedAt = now;
     updateStreak(user);
@@ -163,7 +159,7 @@ exports.completeMonthlyChallenge = async (req, res) => {
       totalXp: user.totalXp,
       technicalXp: user.technicalXp,
       businessXp: user.businessXp,
-      badges: badges
+      badges: [badge] // Return as array for consistency
     });
   } catch (err) {
     console.error(err);
