@@ -8,7 +8,7 @@ import {
 } from 'lucide-react';
 import './Dashboard.css';
 
-// Helper function to get correct day names
+// FIXED: Proper day name function
 const getDayName = (dateString) => {
   const date = new Date(dateString);
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -43,8 +43,6 @@ const Dashboard = () => {
   const handleLogout = () => {
     logout();
   };
-
-
 
   if (loading) {
     return (
@@ -150,9 +148,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Main Content Grid - REMOVED MONTHLY CHALLENGE */}
+        {/* Main Content Grid */}
         <div className="main-grid">
-          {/* XP Growth Chart - FIXED DAY LABELS */}
+          {/* XP Growth Chart - FIXED: Correct day labels */}
           <div className="dashboard-card xp-chart-card">
             <h3 className="card-title">
               <TrendingUp size={20} />
@@ -164,6 +162,7 @@ const Dashboard = () => {
                   {dashboardData.xpGrowth.map((day, index) => {
                     const maxXp = Math.max(...dashboardData.xpGrowth.map(d => d.xp), 1);
                     const heightPercent = (day.xp / maxXp) * 100;
+                    // FIXED: Use proper day name function
                     const dayName = getDayName(day.date);
                     
                     return (
