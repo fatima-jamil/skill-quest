@@ -4,7 +4,7 @@ const cors = require('cors');
 const connectDB = require('./config/db');
 const app = express();
 
-// Connect to MongoDB
+
 connectDB();
 
 app.use(cors({
@@ -14,10 +14,10 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization']
 }));
 
-// Basic middleware
+
 app.use(express.json());
 
-// Debug middleware (logs every request)
+
 app.use((req, res, next) => {
   console.log(`${req.method} ${req.url}`);
   console.log('Headers:', req.headers);
@@ -25,7 +25,7 @@ app.use((req, res, next) => {
   next();
 });
 
-// Basic test routes
+
 app.get('/ping', (req, res) => {
   res.json({ message: 'pong' });
 });
@@ -57,29 +57,28 @@ app.post('/test', (req, res) => {
   });
 });
 
-// Auth routes (already working)
+
 app.use('/api/auth', require('./routes/authRoutes'));
 
-// 🧠 NEW FUNCTIONALITY STARTS HERE
+
 app.use('/api/users', require('./routes/dashboardRoutes'));
 app.use('/api/skills', require('./routes/skillsRoutes'));
 app.use('/api/challenges', require('./routes/challengeRoutes'));
 app.use('/api/rankings', require('./routes/rankingRoutes'));
-// 🧠 NEW FUNCTIONALITY ENDS HERE
 
-// Error handling middleware
+
 app.use((err, req, res, next) => {
   console.error('Error:', err.stack);
   res.status(500).json({ message: 'Something went wrong!' });
 });
 
-// Handle 404 routes - This should be last
+
 app.use((req, res) => {
   console.log('404 Not Found:', req.method, req.url);
   res.status(404).json({ message: 'Route not found' });
 });
 
-// Start server
+
 const PORT = process.env.PORT || 5050;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

@@ -1,4 +1,4 @@
-// backend/seed/monthlyChallenge.js
+
 require('dotenv').config({ path: './config.env' });
 const mongoose = require('mongoose');
 const Challenge = require('../models/Challenge');
@@ -9,10 +9,10 @@ const seedMonthlyChallenge = async () => {
   try {
     await connectDB();
     
-    // Remove existing monthly challenge
+
     await Challenge.deleteMany({ isMonthly: true });
 
-    // Get a random skill for the monthly challenge
+
     const skills = await Skill.find().limit(1);
     
     if (skills.length === 0) {
@@ -20,13 +20,13 @@ const seedMonthlyChallenge = async () => {
       process.exit(1);
     }
 
-    // Create monthly challenge
+
     const monthlyChallenge = {
       title: 'Monthly Mega Challenge',
       skill: skills[0]._id,
       xpReward: 1000,
       isMonthly: true,
-      availableUntil: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0) // End of current month
+      availableUntil: new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0) 
     };
 
     await Challenge.create(monthlyChallenge);

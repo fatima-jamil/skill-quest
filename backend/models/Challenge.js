@@ -1,4 +1,4 @@
-// models/Challenge.js
+
 const mongoose = require('mongoose');
 
 const challengeSchema = new mongoose.Schema({

@@ -1,4 +1,4 @@
-// controllers/dashboardController.js
+
 const User = require('../models/User');
 
 exports.getDashboard = async (req, res) => {
@@ -16,7 +16,7 @@ exports.getDashboard = async (req, res) => {
     const longestStreak = user.longestStreak;
     const recentBadges = user.badges.slice(-5).reverse();
 
-    // XP Growth (last 7 days) - FIXED to include monthly challenge
+
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     
@@ -28,7 +28,7 @@ exports.getDashboard = async (req, res) => {
       const dayEnd = new Date(date);
       dayEnd.setHours(23, 59, 59, 999);
       
-      // Calculate XP from regular challenges completed on this day
+
       const challengeXp = user.completedChallenges
         .filter(c => {
           const completedDate = new Date(c.completedAt);
@@ -36,7 +36,7 @@ exports.getDashboard = async (req, res) => {
         })
         .reduce((sum, c) => sum + (c.earnedXp || 0), 0);
 
-      // Calculate XP from skills completed on this day
+
       const skillXp = user.skills
         .filter(s => {
           if (s.completedAt) {
@@ -47,12 +47,12 @@ exports.getDashboard = async (req, res) => {
         })
         .reduce((sum, s) => sum + (s.earnedXp || 0), 0);
 
-      // FIXED: Calculate XP from monthly challenge completed on this day
+
       let monthlyXp = 0;
       if (user.lastMonthlyChallengeCompletedAt) {
         const monthlyDate = new Date(user.lastMonthlyChallengeCompletedAt);
         if (monthlyDate >= dayStart && monthlyDate <= dayEnd) {
-          monthlyXp = 1000; // Monthly challenge XP reward
+          monthlyXp = 1000; 
         }
       }
 
@@ -62,7 +62,7 @@ exports.getDashboard = async (req, res) => {
       };
     });
 
-    // Progress for all started skills
+
     const startedSkillsProgress = user.skills.map(skill => ({
       name: skill.name,
       type: skill.type,
@@ -70,7 +70,7 @@ exports.getDashboard = async (req, res) => {
       experience: skill.experience
     }));
 
-    // Overall rank
+
     const higherRankCount = await User.countDocuments({ totalXp: { $gt: totalXp } });
     const overallRank = higherRankCount + 1;
 

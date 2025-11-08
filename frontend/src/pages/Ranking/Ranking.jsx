@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/Layout/Navbar'; 
 import { rankingAPI } from '../../services/api';
 import { logout, getCurrentUser } from '../../utils/auth';
 import { 
@@ -54,6 +55,8 @@ const Ranking = () => {
   if (loading) {
     return (
       <div className="ranking-page">
+        <Navbar /> 
+
         <div className="loading">Loading leaderboard...</div>
       </div>
     );
@@ -61,33 +64,11 @@ const Ranking = () => {
 
   return (
     <div className="ranking-page">
-      {/* Navigation Header */}
-      <nav className="ranking-nav">
-        <div className="nav-container">
-          <div className="nav-logo" onClick={() => navigate('/dashboard')}>
-            🎯 Skill Quest
-          </div>
-          <div className="nav-links">
-            <button onClick={() => navigate('/dashboard')} className="nav-link">
-              <Home size={20} /> Dashboard
-            </button>
-            <button onClick={() => navigate('/skills')} className="nav-link">
-              <BookOpen size={20} /> Skills
-            </button>
-            <button onClick={() => navigate('/challenges')} className="nav-link">
-              <Target size={20} /> Challenges
-            </button>
-            <button onClick={() => navigate('/ranking')} className="nav-link active">
-              <TrendingUp size={20} /> Ranking
-            </button>
-            <button onClick={handleLogout} className="nav-link logout">
-              <LogOut size={20} /> Logout
-            </button>
-          </div>
-        </div>
-      </nav>
 
-      {/* Main Content */}
+      <Navbar /> 
+
+
+
       <div className="ranking-container">
         <div className="ranking-header">
           <h1>Global Rankings</h1>
@@ -96,7 +77,7 @@ const Ranking = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        {/* Category Tabs */}
+
         <div className="ranking-tabs">
           <button 
             className={`tab-btn ${leaderboardType === 'overall' ? 'active' : ''}`}
@@ -118,7 +99,7 @@ const Ranking = () => {
           </button>
         </div>
 
-        {/* Current User Rank Card */}
+
         {leaderboardData && leaderboardData.currentUser && (
           <div className="current-user-card">
             <div className="user-rank-section">
@@ -144,7 +125,7 @@ const Ranking = () => {
           </div>
         )}
 
-        {/* Leaderboard Table */}
+
         <div className="leaderboard-section">
           <h2 className="section-title">Top 10 Learners</h2>
           <div className="leaderboard-table">

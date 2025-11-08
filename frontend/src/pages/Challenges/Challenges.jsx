@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/Layout/Navbar'; 
 import { challengesAPI } from '../../services/api';
 import { logout } from '../../utils/auth';
 import { 
@@ -50,7 +51,7 @@ const Challenges = () => {
       if (response.message === 'Challenge already completed') {
         alert('You have already completed this challenge!');
       } else {
-        // Update challenges list
+
         setChallenges(challenges.map(challenge => 
           challenge._id === challengeId 
             ? { ...challenge, isCompleted: true }
@@ -75,7 +76,7 @@ const Challenges = () => {
     if (response.message === 'Monthly challenge already completed') {
       alert('You have already completed this month\'s challenge!');
     } else {
-      // FIXED: Show correct badge count (1 instead of response.badges.length)
+
       alert(`🎉 Monthly challenge completed! You earned 1 exclusive badge and ${response.technicalXp} XP!`);
       fetchChallenges();
     }
@@ -91,13 +92,14 @@ const Challenges = () => {
     logout();
   };
 
-  // Separate monthly challenge from regular challenges
+
   const regularChallenges = challenges.filter(c => !c.isMonthly);
   const monthlyChallenge = challenges.find(c => c.isMonthly);
 
   if (loading) {
     return (
       <div className="challenges-page">
+        <Navbar /> 
         <div className="loading">Loading challenges...</div>
       </div>
     );
@@ -105,33 +107,10 @@ const Challenges = () => {
 
   return (
     <div className="challenges-page">
-      {/* Navigation Header */}
-      <nav className="challenges-nav">
-        <div className="nav-container">
-          <div className="nav-logo" onClick={() => navigate('/dashboard')}>
-            🎯 Skill Quest
-          </div>
-          <div className="nav-links">
-            <button onClick={() => navigate('/dashboard')} className="nav-link">
-              <Home size={20} /> Dashboard
-            </button>
-            <button onClick={() => navigate('/skills')} className="nav-link">
-              <BookOpen size={20} /> Skills
-            </button>
-            <button onClick={() => navigate('/challenges')} className="nav-link active">
-              <Target size={20} /> Challenges
-            </button>
-            <button onClick={() => navigate('/ranking')} className="nav-link">
-              <TrendingUp size={20} /> Ranking
-            </button>
-            <button onClick={handleLogout} className="nav-link logout">
-              <LogOut size={20} /> Logout
-            </button>
-          </div>
-        </div>
-      </nav>
 
-      {/* Main Content */}
+      <Navbar /> 
+
+
       <div className="challenges-container">
         <div className="challenges-header">
           <h1>Skill Challenges</h1>
@@ -141,7 +120,7 @@ const Challenges = () => {
         {error && <div className="error-message">{error}</div>}
 
 
-{/* Monthly Challenge Section */}
+
 {monthlyChallenge && (
   <div className="monthly-challenge-section">
     <div className="monthly-challenge-card">
@@ -163,7 +142,7 @@ const Challenges = () => {
           <Trophy size={24} />
           <div>
             <div className="reward-label">Badge</div>
-            {/* FIXED: Changed from "5 Exclusive" to "1 Exclusive" */}
+
             <div className="reward-value">1 Exclusive</div>
           </div>
         </div>
@@ -185,7 +164,7 @@ const Challenges = () => {
   </div>
 )}
 
-        {/* Regular Challenges Grid */}
+
         <div className="challenges-section">
           <h2 className="section-title">Skill Challenges</h2>
           <div className="challenges-grid">
@@ -235,7 +214,7 @@ const Challenges = () => {
         </div>
       </div>
 
-      {/* Challenge Modal */}
+
       {selectedChallenge && (
         <div className="modal-overlay" onClick={() => setSelectedChallenge(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>

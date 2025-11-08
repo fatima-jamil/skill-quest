@@ -1,4 +1,4 @@
-// utils/leaderboard.js
+
 const User = require('../models/User');
 
 /**

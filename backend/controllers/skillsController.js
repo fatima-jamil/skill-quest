@@ -1,10 +1,10 @@
-// backend/controllers/skillsController.js
+
 const Skill = require('../models/Skill');
 const User = require('../models/User');
 const { awardXp } = require('../utils/xp');
 const { updateStreak } = require('../utils/streak');
 
-// FIXED: Return skills with completion status
+
 exports.listSkills = async (req, res) => {
   try {
     const category = req.query.category;
@@ -13,11 +13,11 @@ exports.listSkills = async (req, res) => {
     
     const skills = await Skill.find(filter);
     
-    // Get current user to check completed skills
+
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
     
-    // Add completion status to each skill
+
     const skillsWithStatus = skills.map(skill => {
       const isCompleted = user.completedSkills.some(
         completedId => completedId.toString() === skill._id.toString()
@@ -45,18 +45,18 @@ exports.completeSkill = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Check if skill already completed
+
     if (user.completedSkills.includes(skill._id)) {
       return res.status(400).json({ message: 'Skill already completed' });
     }
 
-    // Add to completed skills
+
     user.completedSkills.push(skill._id);
 
-    // Award XP
+
     awardXp(user, skill.category, skill.xpReward);
 
-    // Update or add skill in user's skills array with completion tracking
+
     const existingSkill = user.skills.find(
       s => s.name === skill.name && s.type === skill.category
     );
@@ -77,7 +77,7 @@ exports.completeSkill = async (req, res) => {
       });
     }
 
-    // Update streak
+
     updateStreak(user);
     
     await user.save();

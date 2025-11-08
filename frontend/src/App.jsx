@@ -19,12 +19,12 @@ function App() {
     <Router>
       <div className="App">
         <Routes>
-          {/* Public Routes */}
+
           <Route path="/" element={<Landing />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<Signup />} />
 
-          {/* Protected Routes */}
+
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <Dashboard />
@@ -46,7 +46,7 @@ function App() {
             </ProtectedRoute>
           } />
 
-          {/* Catch all - redirect to landing */}
+
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </div>

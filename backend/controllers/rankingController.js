@@ -1,4 +1,4 @@
-// controllers/rankingController.js
+
 const { getTopUsersByXp } = require('../utils/leaderboard');
 const User = require('../models/User');
 
@@ -11,10 +11,10 @@ exports.getLeaderboard = async (req, res) => {
     else if (type === 'business') xpField = 'businessXp';
     else xpField = 'totalXp';
 
-    // Get top 10 users by XP
+
     const topUsers = await getTopUsersByXp(xpField, 10);
 
-    // Get current user's XP and calculate rank
+
     const currentUser = await User.findById(req.user.id).select(['_id', 'username', xpField]);
     if (!currentUser) {
       return res.status(404).json({ message: 'User not found' });

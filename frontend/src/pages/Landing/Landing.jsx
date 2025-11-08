@@ -41,7 +41,7 @@ const Landing = () => {
 
   return (
     <div className="landing-page">
-      {/* Hero Section */}
+
       <section className="hero-section">
         <div className="container">
           <div className="hero-emoji">🎯</div>
@@ -58,7 +58,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* Features Section */}
+
       <section className="features-section">
         <div className="container">
           <h2 className="section-title">Why Choose Skill Quest?</h2>
@@ -74,7 +74,7 @@ const Landing = () => {
         </div>
       </section>
 
-      {/* CTA Section */}
+
       <section className="cta-section">
         <div className="container">
           <h2 className="cta-title">Ready to Start Your Journey?</h2>

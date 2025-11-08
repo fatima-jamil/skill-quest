@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/Layout/Navbar'; 
 import { dashboardAPI } from '../../services/api';
 import { logout, getCurrentUser } from '../../utils/auth';
 import { 
@@ -8,7 +9,7 @@ import {
 } from 'lucide-react';
 import './Dashboard.css';
 
-// FIXED: Proper day name function
+
 const getDayName = (dateString) => {
   const date = new Date(dateString);
   const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -47,6 +48,7 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="dashboard-page">
+        <Navbar /> 
         <div className="loading">Loading your dashboard...</div>
       </div>
     );
@@ -55,6 +57,7 @@ const Dashboard = () => {
   if (error) {
     return (
       <div className="dashboard-page">
+        <Navbar /> 
         <div className="error-message">{error}</div>
       </div>
     );
@@ -62,35 +65,12 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard-page">
-      {/* Navigation Header */}
-      <nav className="dashboard-nav">
-        <div className="nav-container">
-          <div className="nav-logo">
-            🎯 Skill Quest
-          </div>
-          <div className="nav-links">
-            <button onClick={() => navigate('/dashboard')} className="nav-link active">
-              <Home size={20} /> Dashboard
-            </button>
-            <button onClick={() => navigate('/skills')} className="nav-link">
-              <BookOpen size={20} /> Skills
-            </button>
-            <button onClick={() => navigate('/challenges')} className="nav-link">
-              <Target size={20} /> Challenges
-            </button>
-            <button onClick={() => navigate('/ranking')} className="nav-link">
-              <TrendingUp size={20} /> Ranking
-            </button>
-            <button onClick={handleLogout} className="nav-link logout">
-              <LogOut size={20} /> Logout
-            </button>
-          </div>
-        </div>
-      </nav>
 
-      {/* Main Dashboard Content */}
+      <Navbar /> 
+
+
       <div className="dashboard-container">
-        {/* Welcome Header */}
+
         <div className="welcome-header">
           <div className="welcome-text">
             <h1>Welcome back, {dashboardData?.name || currentUser?.username}! 👋</h1>
@@ -105,7 +85,7 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Stats Cards */}
+
         <div className="stats-grid">
           <div className="stat-card">
             <div className="stat-icon skills">
@@ -148,9 +128,9 @@ const Dashboard = () => {
           </div>
         </div>
 
-        {/* Main Content Grid */}
+
         <div className="main-grid">
-          {/* XP Growth Chart - FIXED: Correct day labels */}
+
           <div className="dashboard-card xp-chart-card">
             <h3 className="card-title">
               <TrendingUp size={20} />
@@ -158,38 +138,39 @@ const Dashboard = () => {
             </h3>
             <div className="chart-container">
               {dashboardData?.xpGrowth && dashboardData.xpGrowth.length > 0 ? (
-                <div className="bar-chart">
-                  {dashboardData.xpGrowth.map((day, index) => {
-                    const maxXp = Math.max(...dashboardData.xpGrowth.map(d => d.xp), 1);
-                    const heightPercent = (day.xp / maxXp) * 100;
-                    // FIXED: Use proper day name function
-                    const dayName = getDayName(day.date);
-                    
-                    return (
-                      <div key={index} className="bar-item">
-                        <div className="bar-wrapper">
-                          <div 
-                            className="bar" 
-                            style={{ height: `${heightPercent}%` }}
-                            title={`${day.xp} XP on ${dayName}`}
-                          >
-                            <span className="bar-value">{day.xp}</span>
-                          </div>
-                        </div>
-                        <div className="bar-label">{dayName}</div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="empty-state">
-                  <p>No activity yet. Start completing skills to see your progress!</p>
-                </div>
-              )}
+  <div className="bar-chart">
+    {dashboardData.xpGrowth.map((day, index) => {
+      const maxXp = Math.max(...dashboardData.xpGrowth.map(d => d.xp), 1);
+      const heightPercent = (day.xp / maxXp) * 100;
+      
+      // FIXED: Use proper day name function
+      const dayName = getDayName(day.date);
+      
+      return (
+        <div key={index} className="bar-item">
+          <div className="bar-wrapper">
+            <div 
+              className="bar" 
+              style={{ height: `${heightPercent}%` }}
+              title={`${day.xp} XP on ${dayName}`}
+            >
+              <span className="bar-value">{day.xp}</span>
+            </div>
+          </div>
+          <div className="bar-label">{dayName}</div>
+        </div>
+      );
+    })}
+  </div>
+) : (
+  <div className="empty-state">
+    <p>No activity yet. Start completing skills to see your progress!</p>
+  </div>
+)}
             </div>
           </div>
 
-          {/* Skills Progress */}
+
           <div className="dashboard-card skills-progress-card">
             <h3 className="card-title">
               <BookOpen size={20} />
@@ -228,7 +209,7 @@ const Dashboard = () => {
             </div>
           </div>
 
-          {/* Recent Badges */}
+
           <div className="dashboard-card badges-card">
             <h3 className="card-title">
               <Award size={20} />

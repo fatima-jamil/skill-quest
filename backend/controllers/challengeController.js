@@ -4,7 +4,6 @@ const { awardXp } = require('../utils/xp');
 const { updateStreak } = require('../utils/streak');
 const Badge = require('../models/Badge');
 
-// ✅ LIST ALL CHALLENGES
 exports.listChallenges = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -12,7 +11,7 @@ exports.listChallenges = async (req, res) => {
 
     const challenges = await Challenge.find().populate('skill');
     
-    // Add completion status to each challenge
+
     const challengesWithStatus = challenges.map(challenge => {
       const isCompleted = user.completedChallenges.some(
         c => c.challengeId.toString() === challenge._id.toString()
@@ -31,7 +30,7 @@ exports.listChallenges = async (req, res) => {
   }
 };
 
-// ✅ OPEN A CHALLENGE (updates streak)
+
 exports.openChallenge = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -47,7 +46,7 @@ exports.openChallenge = async (req, res) => {
   }
 };
 
-// ✅ COMPLETE A CHALLENGE
+
 exports.completeChallenge = async (req, res) => {
   try {
     const challenge = await Challenge.findById(req.params.id).populate('skill');
@@ -56,7 +55,7 @@ exports.completeChallenge = async (req, res) => {
     const user = await User.findById(req.user.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    // Prevent duplicate challenge completion
+
     const alreadyCompleted = user.completedChallenges.some(
       (c) => c.challengeId.toString() === challenge._id.toString()
     );
@@ -64,10 +63,10 @@ exports.completeChallenge = async (req, res) => {
       return res.status(400).json({ message: 'Challenge already completed' });
     }
 
-    // Award XP (with FIXED field names)
+
     awardXp(user, challenge.skill.category, challenge.xpReward);
 
-    // ✅ Add or update user's skill tracking
+
     const existingSkill = user.skills.find(
       (s) => s.name === challenge.skill.name && s.type === challenge.skill.category
     );
@@ -82,10 +81,10 @@ exports.completeChallenge = async (req, res) => {
       });
     } else {
       existingSkill.experience += challenge.xpReward;
-      existingSkill.level = Math.floor(existingSkill.experience / 100); // example level-up logic
+      existingSkill.level = Math.floor(existingSkill.experience / 100); 
     }
 
-    // Create badge for completing the challenge
+
     const badge = await Badge.create({
       name: `${challenge.skill.name} Challenge Master`,
       description: `Completed the ${challenge.skill.name} challenge`,
@@ -93,14 +92,14 @@ exports.completeChallenge = async (req, res) => {
     });
     user.badges.push(badge._id);
 
-    // Mark challenge complete
+
     user.completedChallenges.push({
       challengeId: challenge._id,
       completedAt: new Date(),
       earnedXp: challenge.xpReward
     });
 
-    // Mark skill as completed (first time only)
+
     if (!user.completedSkills.includes(challenge.skill._id)) {
       user.completedSkills.push(challenge.skill._id);
     }
@@ -121,7 +120,7 @@ exports.completeChallenge = async (req, res) => {
   }
 };
 
-// ✅ COMPLETE MONTHLY CHALLENGE - FIXED: Only 1 badge instead of 5
+
 exports.completeMonthlyChallenge = async (req, res) => {
   try {
     const user = await User.findById(req.user.id);
@@ -138,11 +137,11 @@ exports.completeMonthlyChallenge = async (req, res) => {
       return res.status(400).json({ message: 'Monthly challenge already completed' });
     }
 
-    // Award XP for monthly challenge (typically technical category)
+
     const monthlyXp = 1000;
     awardXp(user, 'technical', monthlyXp);
 
-    // FIXED: Create and assign only 1 badge instead of 5
+
     const badge = await Badge.create({
       name: `Monthly Challenge Champion`,
       description: `Completed the monthly mega challenge`,
@@ -159,7 +158,7 @@ exports.completeMonthlyChallenge = async (req, res) => {
       totalXp: user.totalXp,
       technicalXp: user.technicalXp,
       businessXp: user.businessXp,
-      badges: [badge] // Return as array for consistency
+      badges: [badge] 
     });
   } catch (err) {
     console.error(err);

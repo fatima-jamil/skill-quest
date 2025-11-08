@@ -1,6 +1,6 @@
 const API_BASE_URL = 'http://localhost:5050/api';
 
-// Helper function to get auth headers
+
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token');
   return {
@@ -9,7 +9,7 @@ const getAuthHeaders = () => {
   };
 };
 
-// Auth APIs
+
 export const authAPI = {
   login: async (email, password) => {
     const response = await fetch(`${API_BASE_URL}/auth/login`, {
@@ -37,7 +37,7 @@ export const authAPI = {
   }
 };
 
-// Dashboard API
+
 export const dashboardAPI = {
   getDashboard: async () => {
     const response = await fetch(`${API_BASE_URL}/users/dashboard`, {
@@ -47,7 +47,7 @@ export const dashboardAPI = {
   }
 };
 
-// Skills APIs
+
 export const skillsAPI = {
   getAllSkills: async (category = '') => {
     const url = category 
@@ -68,7 +68,7 @@ export const skillsAPI = {
   }
 };
 
-// Challenges APIs
+
 export const challengesAPI = {
   getAllChallenges: async () => {
     const response = await fetch(`${API_BASE_URL}/challenges`, {
@@ -102,7 +102,7 @@ export const challengesAPI = {
   }
 };
 
-// Ranking APIs
+
 export const rankingAPI = {
   getLeaderboard: async (type = 'overall') => {
     const response = await fetch(`${API_BASE_URL}/rankings/leaderboard?type=${type}`, {

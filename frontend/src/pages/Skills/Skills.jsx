@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Navbar from '../../components/Layout/Navbar'; 
 import { skillsAPI } from '../../services/api';
 import { logout } from '../../utils/auth';
 import { CheckCircle, BookOpen, Code, Briefcase, LogOut, Home, Target, TrendingUp, Award } from 'lucide-react';
@@ -55,7 +56,7 @@ const Skills = () => {
       if (response.message === 'Skill already completed') {
         setError('You have already completed this skill!');
       } else {
-        // Update the skills list to mark this skill as completed
+
         setSkills(skills.map(skill => 
           skill._id === selectedSkill._id 
             ? { ...skill, isCompleted: true }
@@ -106,6 +107,8 @@ const Skills = () => {
   if (loading) {
     return (
       <div className="skills-page">
+        <Navbar /> 
+
         <div className="loading">Loading skills...</div>
       </div>
     );
@@ -113,33 +116,11 @@ const Skills = () => {
 
   return (
     <div className="skills-page">
-      {/* Navigation Header */}
-      <nav className="skills-nav">
-        <div className="nav-container">
-          <div className="nav-logo" onClick={() => navigate('/dashboard')}>
-            🎯 Skill Quest
-          </div>
-          <div className="nav-links">
-            <button onClick={() => navigate('/dashboard')} className="nav-link">
-              <Home size={20} /> Dashboard
-            </button>
-            <button onClick={() => navigate('/skills')} className="nav-link active">
-              <BookOpen size={20} /> Skills
-            </button>
-            <button onClick={() => navigate('/challenges')} className="nav-link">
-              <Target size={20} /> Challenges
-            </button>
-            <button onClick={() => navigate('/ranking')} className="nav-link">
-              <TrendingUp size={20} /> Ranking
-            </button>
-            <button onClick={handleLogout} className="nav-link logout">
-              <LogOut size={20} /> Logout
-            </button>
-          </div>
-        </div>
-      </nav>
 
-      {/* Main Content */}
+              <Navbar /> 
+
+
+
       <div className="skills-container">
         <div className="skills-header">
           <h1>Master Your Skills</h1>
@@ -148,7 +129,7 @@ const Skills = () => {
 
         {error && <div className="error-message">{error}</div>}
 
-        {/* Category Filters */}
+
         <div className="category-filters">
           <button 
             className={`filter-btn ${selectedCategory === 'all' ? 'active' : ''}`}
@@ -170,7 +151,7 @@ const Skills = () => {
           </button>
         </div>
 
-        {/* Skills Grid */}
+
         <div className="skills-grid">
           {filteredSkills.map((skill) => (
             <div 
@@ -201,7 +182,7 @@ const Skills = () => {
         </div>
       </div>
 
-      {/* Skill Detail Modal */}
+
       {selectedSkill && (
         <div className="modal-overlay" onClick={() => setSelectedSkill(null)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
