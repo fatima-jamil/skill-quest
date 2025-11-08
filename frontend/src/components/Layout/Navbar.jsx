@@ -1,6 +1,4 @@
-
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, BookOpen, Target, TrendingUp, LogOut, Menu, X } from 'lucide-react';
 import { logout } from '../../utils/auth';
@@ -11,13 +9,41 @@ const Navbar = () => {
   const location = useLocation();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
+  // Close menu when route changes
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
+
+  // Close menu when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (isMenuOpen && !event.target.closest('.nav-container')) {
+        setIsMenuOpen(false);
+      }
+    };
+
+    if (isMenuOpen) {
+      document.addEventListener('click', handleClickOutside);
+      // Prevent body scroll when menu is open
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'unset';
+    }
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      document.body.style.overflow = 'unset';
+    };
+  }, [isMenuOpen]);
+
   const handleLogout = () => {
+    setIsMenuOpen(false);
     logout();
   };
 
   const handleNavigate = (path) => {
+    setIsMenuOpen(false);
     navigate(path);
-    setIsMenuOpen(false); // Close menu after navigation
   };
 
   const isActive = (path) => location.pathname === path;
@@ -32,8 +58,12 @@ const Navbar = () => {
         {/* Hamburger Menu Button */}
         <button 
           className="nav-toggle" 
-          onClick={() => setIsMenuOpen(!isMenuOpen)}
+          onClick={(e) => {
+            e.stopPropagation();
+            setIsMenuOpen(!isMenuOpen);
+          }}
           aria-label="Toggle menu"
+          aria-expanded={isMenuOpen}
         >
           {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
         </button>
