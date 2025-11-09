@@ -45,7 +45,7 @@ const Landing = () => {
       <section className="hero-section">
         <div className="container">
           <div className="hero-emoji">🎯</div>
-          <h1 className="hero-title">Welcome to Skill Questt</h1>
+          <h1 className="hero-title">Welcome to Skill Quest</h1>
           <p className="hero-subtitle">
             Level up your skills through gamified learning experiences
           </p>
