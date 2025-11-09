@@ -35,7 +35,7 @@ app.get('/', (req, res) => {
   console.log('Root route accessed');
   res.status(200).json({ 
     message: 'Welcome to Skill Quest API',
-    status: 'success'
+    status: 'successs'
   });
 });
 app.get('/test', (req, res) => {
